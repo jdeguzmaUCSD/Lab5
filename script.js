@@ -1,15 +1,69 @@
 // script.js
 
 const img = new Image(); // used to load image from <input> and draw to canvas
+const input = document.getElementById('image-input');
+const form = document.getElementById('generate-meme');
+const topText = document.getElementById('text-top');
+const bottomText = document.getElementById('text-bottom');
+const generateButton = document.querySelector("[type='submit']");
+const clearButton = document.querySelector("[type='reset']");
+const readTextbutton = document.querySelector("[type='button']");
+const readVolumeSlider = document.querySelector("[type='range']");
 
-// Fires whenever the img object loads a new image (such as with img.src =)
+input.addEventListener('change', () => {
+  img.src = URL.createObjectURL(input.files[0]);
+});
+
 img.addEventListener('load', () => {
-  // TODO
+  var canvas = document.getElementById('user-image');
+  var context = canvas.getContext('2d');
 
-  // Some helpful tips:
-  // - Fill the whole Canvas with black first to add borders on non-square images, then draw on top
-  // - Clear the form when a new image is selected
-  // - If you draw the image to canvas here, it will update as soon as a new image is selected
+  context.clearRect(0, 0, canvas.getAttribute('width'), canvas.getAttribute('height'));
+  context.fillStyle = 'black';
+  context.fillRect(0, 0, canvas.getAttribute('width'), canvas.getAttribute('height'));
+  var imgWidth = img.width;
+  var imgHeight = img.height;
+  var dimensions = getDimensions(canvas.getAttribute('width'), canvas.getAttribute('height'), imgWidth, imgHeight);
+  context.drawImage(img, dimensions.startX, dimensions.startY, dimensions.width, dimensions.height);
+
+  // enable generate, disable clear and read text
+  generateButton.disabled = false;
+  clearButton.disabled = true;
+  readTextbutton.disabled = true;
+});
+
+form.addEventListener('submit', () => {
+  event.preventDefault();
+
+  var canvas = document.getElementById('user-image');
+  var context = canvas.getContext('2d');
+  context.textAlign = 'center';
+  context.font = '50px impact';
+  context.fillStyle = 'white';
+  context.fillText(topText.value, 200, 60);
+  context.fillText(bottomText.value, 200, 380);
+
+  generateButton.disabled = true;
+  clearButton.disabled = false;
+  readTextbutton.disabled = false;
+});
+
+clearButton.addEventListener('click', () => {
+  var canvas = document.getElementById('user-image');
+  var context = canvas.getContext('2d');
+
+  context.clearRect(0, 0, canvas.getAttribute('width'), canvas.getAttribute('height'));
+  generateButton.disabled = false;
+  clearButton.disabled = true;
+  readTextbutton.disabled = true;
+});
+
+readTextbutton.addEventListener('click', () => {
+ 
+});
+
+readVolumeSlider.addEventListener('change', () => {
+ 
 });
 
 /**
@@ -23,7 +77,7 @@ img.addEventListener('load', () => {
  * and also the starting X and starting Y coordinate to be used when you draw the new image to the
  * Canvas. These coordinates align with the top left of the image.
  */
-function getDimmensions(canvasWidth, canvasHeight, imageWidth, imageHeight) {
+function getDimensions(canvasWidth, canvasHeight, imageWidth, imageHeight) {
   let aspectRatio, height, width, startX, startY;
 
   // Get the aspect ratio, used so the picture always fits inside the canvas
